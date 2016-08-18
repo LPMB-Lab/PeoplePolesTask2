@@ -25,8 +25,6 @@ KEYS = { 'reset'	: 'r'
 }
 
 OPTOTRAK_IP = '192.219.236.36'
-HMD = HMD_TYPE['VIVE']
-TRACKING = TRACKING_TYPE['VIVE']
 
 # Real Trials
 CONDITIONS = ['POLES', 'AVATAR_FORWARD', 'AVATAR_BACKWARD']
@@ -34,7 +32,7 @@ APERTURES = [1.0, 1.4, 1.8]
 TRIALS_PER_APERTURE = 5
 
 # Catch Trials
-C_CONDITION = ['AVATAR_FORWARD_MOVE', 'AVATAR_BACKWARD_MOVE']
+C_CONDITIONS = ['AVATAR_FORWARD_MOVE', 'AVATAR_BACKWARD_MOVE']
 C_APERTURES = [1.0, 1.4, 1.8]
 CTRIALS_PER_APERTURE = 1
 
@@ -50,6 +48,9 @@ TRACKING_TYPE = {
 	'NONE': 2
 }
 
+HMD = HMD_TYPE['NONE']
+TRACKING = TRACKING_TYPE['NONE']
+
 # Locations for cylinders during learning phase
 learncylinderlocations = [
 	[-1,0,-1.5],
@@ -62,7 +63,6 @@ trials = []
 #add cylinders and create a proximity sensor around each one
 cylinderSensors = []
 hmd = None
-viztask.schedule(experiment)
 
 def initializeHMD():
 	if HMD == HMD_TYPE['OCULUS']:
@@ -115,11 +115,6 @@ def hideMouse():
 	viz.mouse.setTrap(True)
 
 def initializeSimulation():
-	# Preliminary setup
-	viz.setMultiSample(8)
-	viz.fov(60)
-	viz.go()
-
 	#Set up the environment and proximity sensors
 	scene = viz.addChild('../assets/newMaze.osgb')
 
@@ -191,36 +186,27 @@ def EnterCylinder(e, cylinder):
 	cylinder.remove()
 		
 def GenerateTrials():
-	
-	# Left Start Trials
-	leftStartTrials = []
-	
-	# Right Start Trials
-	rightStartTrials = []
-
 	# Trial generation
-	for i in range (0, 3):
-		# Left Triangle Right GVS
-		trial = [THREE_TWO_LEFT_TRIANGLE, RIGHT_GVS]
-		leftStartTrials.append(trial)
-
-		# Right Triangle Right GVS
-		trial = [THREE_TWO_RIGHT_TRIANGLE, RIGHT_GVS]
-		rightStartTrials.append(trial)
+	for i in range (0, TRIALS_PER_APERTURE):
+		for j in range (0, len(CONDITIONS)):
+			for k in range (0, len(APERTURES)):
+				trials.append([CONDITIONS[j], APERTURES[k]])
+	
+	# Catch trial generation
+	for i in range (0, CTRIALS_PER_APERTURE):
+		for j in range (0, len(C_CONDITIONS)):
+			for k in range (0, len(C_APERTURES)):
+				trials.append([C_CONDITIONS[j], C_APERTURES[k]])
 
 	# Shuffle the Trials
-	random.shuffle(leftStartTrials)
-	random.shuffle(rightStartTrials)
-
-	# Add the left/right trials to the main trials one after another
-	# so that the start position alternates from left/right
-	for i in range (0, len(leftStartTrials)):
-		trials.append(leftStartTrials[i])
-		trials.append(rightStartTrials[i])
+	random.shuffle(trials)
+	
+	for trial in trials:
+		print trial
 
 def learnPhase():
 	# Provide instructions for the participant
-	info.setText("Walk to each pillar that appears.")
+	info.setText("Walk to each marker that appears.")
 
 	# Hide instructions after 5 seconds
 	yield viztask.waitTime(5)
@@ -268,3 +254,9 @@ def testPhase():
 
 
 	info.setText('Thank You. You have completed the experiment')
+
+# Preliminary setup
+viz.setMultiSample(8)
+viz.fov(60)
+viz.go()	
+viztask.schedule(experiment)
