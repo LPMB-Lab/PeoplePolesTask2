@@ -64,6 +64,19 @@ trials = []
 cylinderSensors = []
 hmd = None
 
+class Trial():
+	def __init__(self, condition, aperture):
+		self.condition = condition
+		self.aperture = aperture
+	
+	def toString(self):
+		return "%0.1f, %s" % (self.aperture, self.condition)
+
+test = Trial("FORWARD", 0.1)
+#print "%s : %d" % (test.condition, test.aperture)
+print test.toString()
+print "YE"
+	
 def initializeHMD():
 	if HMD == HMD_TYPE['OCULUS']:
 		# Setup Oculus Rift HMD
@@ -165,7 +178,7 @@ def ExportTrials():
 	export_data = open(str(fileName), 'a')
 	
 	for i in range (0, len(trials)):
-		export_data.write( str(i+1) + ". " + str(trials[i][1]) + ", " + str(trials[i][0][3][0]) + "\n")
+		export_data.write( str(i+1) + ". " + trials[i].toString() + "\n")
 		
 	export_data.flush()
 
@@ -190,19 +203,16 @@ def GenerateTrials():
 	for i in range (0, TRIALS_PER_APERTURE):
 		for j in range (0, len(CONDITIONS)):
 			for k in range (0, len(APERTURES)):
-				trials.append([CONDITIONS[j], APERTURES[k]])
+				trials.append(Trial(CONDITIONS[j], APERTURES[k]))
 	
 	# Catch trial generation
 	for i in range (0, CTRIALS_PER_APERTURE):
 		for j in range (0, len(C_CONDITIONS)):
 			for k in range (0, len(C_APERTURES)):
-				trials.append([C_CONDITIONS[j], C_APERTURES[k]])
+				trials.append(Trial(C_CONDITIONS[j], C_APERTURES[k]))
 
 	# Shuffle the Trials
 	random.shuffle(trials)
-	
-	for trial in trials:
-		print trial
 
 def learnPhase():
 	# Provide instructions for the participant
