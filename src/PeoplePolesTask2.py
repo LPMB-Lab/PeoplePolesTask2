@@ -71,11 +71,6 @@ class Trial():
 	
 	def toString(self):
 		return "%0.1f, %s" % (self.aperture, self.condition)
-
-test = Trial("FORWARD", 0.1)
-#print "%s : %d" % (test.condition, test.aperture)
-print test.toString()
-print "YE"
 	
 def initializeHMD():
 	if HMD == HMD_TYPE['OCULUS']:
@@ -178,7 +173,8 @@ def ExportTrials():
 	export_data = open(str(fileName), 'a')
 	
 	for i in range (0, len(trials)):
-		export_data.write( str(i+1) + ". " + trials[i].toString() + "\n")
+		#export_data.write( str(i+1) + ". " + trials[i].toString() + "\n")
+		export_data.write("%s. %s \n" % (str(i+1), trials[i].toString()))
 		
 	export_data.flush()
 
