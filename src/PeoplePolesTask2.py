@@ -87,12 +87,23 @@ class PeoplePolesTask2():
 			[1,0,1.5],
 			[1,0,-1.5]]
 		
+		self.crate_1 = viz.addChild('crate.osgb')
+		self.crate_1.setScale(2, 2, 2)
+		self.crate_1.setPosition(2, 1, 0)
+		# self.crate_1.visible(viz.OFF)
+		
+		self.crate_2 = viz.addChild('crate.osgb')
+		self.crate_2.setScale(2, 2, 2)
+		self.crate_2.setPosition(-2, 1, 0)
+		
 		self.initializeSimulation()
 	
 	def initializeSimulation(self):
 		
 		#Set up the environment and proximity sensors
 		scene = viz.addChild('../assets/newMaze.osgb')
+		# scene = viz.addChild('lab.osgb')
+		# wall = viz.addChild('crescent_mesh.osgb')
 
 		#Create proximity manager and set debug on. Toggle debug with d key
 		self.manager.setDebug(viz.ON)
@@ -129,7 +140,6 @@ class PeoplePolesTask2():
 			viewLink = viz.link(hmd.getSensor(), viz.MainView, mask=viz.LINK_ORI)
 
 			# Apply user profile eye height to view
-
 			profile = hmd.getProfile()
 			if profile:
 				viewLink.setOffset([0,profile.eyeHeight,0])
@@ -200,7 +210,7 @@ class PeoplePolesTask2():
 		self.manager.addSensor(sensor)
 		self.manager.onEnter(sensor, self.EnterCylinder, cylinder)
 
-	#fade to true color when viewpoint moves near
+	# Remove cylinder on enter
 	def EnterCylinder(self, e, cylinder):
 		cylinder.remove()
 
